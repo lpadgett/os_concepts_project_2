@@ -1,13 +1,14 @@
 import java.util.UUID;
 
-public class Customer {
+public class Customer extends Person {
     private UUID uuid;
 
     public Customer(){
-        this.uuid = UUID.randomUUID(); //Give customer a unique identifier.
+        this.uuid = UUID.randomUUID();
     }
 
-    public UUID getUuid(){
-        return this.uuid;
+    @Override
+    public void run(){
+
     }
 }

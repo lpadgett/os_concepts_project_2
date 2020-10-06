@@ -1,13 +1,14 @@
 import java.util.UUID;
 
-public class Waiter extends Thread {
+public class Waiter extends Person {
     private UUID uuid;
 
     public Waiter(){
-        this.uuid = UUID.randomUUID(); //Give waiter a unique identifier.
+        this.uuid = UUID.randomUUID();
     }
 
-    public UUID getUuid(){
-        return this.uuid;
+    @Override
+    public void run() {
+
     }
 }

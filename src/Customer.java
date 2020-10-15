@@ -1,7 +1,7 @@
 public class Customer extends Person {
 
     public Customer(String id){
-        this.setId(id);
+        this.setPersonId(id);
     }
 
     @Override

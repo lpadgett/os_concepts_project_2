@@ -1,7 +1,7 @@
 public class Waiter extends Person {
 
     public Waiter(String id){
-        this.setId(id);
+        this.setPersonId(id);
     }
 
     @Override

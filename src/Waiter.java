@@ -1,10 +1,7 @@
-import java.util.UUID;
-
 public class Waiter extends Person {
-    private UUID uuid;
 
-    public Waiter(){
-        this.uuid = UUID.randomUUID();
+    public Waiter(String id){
+        this.setId(id);
     }
 
     @Override

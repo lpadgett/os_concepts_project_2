@@ -1,11 +1,17 @@
-public class Waiter extends Person {
+public class Waiter extends Thread {
+    private String id;
+    private String order;
 
     public Waiter(String id){
-        this.setPersonId(id);
+        this.id = id;
+    }
+
+    public String getWaiterId(){
+        return this.id;
     }
 
     @Override
-    public void run() {
+    public void run(){
 
     }
 }

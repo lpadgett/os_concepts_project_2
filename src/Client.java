@@ -1,30 +1,22 @@
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
 
 public class Client {
-    public static ConcurrentHashMap<String, Person> threadIdLookup; //Create ConcurrentHashMap instead of normal hashmap for extra thread safety.
-    public static int numOfWaiters;
-    public static int numOfCustomers;
+    public static Restaurant restaurant;
+    public static SharedDataSingleton sharedData;
+    public static Semaphore waiterSemaphore; //One semaphore for waiters, another for customers (see line 7 for the semaphore for customers).
+    public static Semaphore customerSemaphore;
+    public static final int numOfWaiters = 3;
+    public static final int numOfCustomers = 40;
 
     public static void main(String[] args){
-        initialize();
+        initialize(numOfWaiters, numOfCustomers); //Initialize with 3 waiters and 40 customers
     }
 
-    public static void initialize(){ //Set all constant variables
-        threadIdLookup = new ConcurrentHashMap<String, Person>();
-        numOfWaiters = 3;
-        numOfCustomers = 40;
-    }
-
-    public static void createAndLaunch(int quantity, PersonType type){
-        String id;
-        for(int i = 0; i < quantity; i++){
-            if(type == PersonType.WAITER){
-                id = new String("Waiter " + i);
-                threadIdLookup.put(id, new Waiter(id));
-            } else {
-                id = new String("Customer " + i);
-                threadIdLookup.put(id, new Customer(id));
-            }
-        }
+    public static void initialize(int waiterQuantity, int customerQuantity) {
+        restaurant = new Restaurant(waiterQuantity, customerQuantity);
+        sharedData = new SharedDataSingleton();
+//        waiterSemaphore = new Semaphore(waiterQuantity);
+//        customerSemaphore = new Semaphore(customerQuantity);
+//        createAndLaunchThreads(numOfWaiters, numOfCustomers);
     }
 }

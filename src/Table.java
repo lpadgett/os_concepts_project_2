@@ -1,14 +1,16 @@
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Table {
     private HashSet<Customer> table;
-    private ArrayList<Customer> line;
+    private Queue<Customer> line;
     public Waiter waiter;
 
     public Table() {
         this.table = new HashSet<Customer>();
-        this.line = new ArrayList<Customer>();
+        this.line = new LinkedList<Customer>();
     }
 
     public boolean tableOrLine(Customer customer, boolean override){
@@ -25,5 +27,9 @@ public class Table {
 
     public void leaveTable(Customer customer){
         this.table.remove(customer);
+
+        if(line.size() > 0){
+            this.table.add(line.remove());
+        }
     }
 }

@@ -1,6 +1,6 @@
 public class Client {
     public static Restaurant restaurant;
-    public static SharedDataSingleton sharedData;
+    private static Customer[] customers;
     public static final int numOfWaiters = 3;
     public static final int numOfCustomers = 40;
 
@@ -9,7 +9,15 @@ public class Client {
     }
 
     public static void initialize(int waiterQuantity, int customerQuantity) {
-        restaurant = new Restaurant(waiterQuantity, customerQuantity);
-        sharedData = new SharedDataSingleton();
+        customers = new Customer[customerQuantity];
+        restaurant = new Restaurant(waiterQuantity);
+        createCustomers(numOfCustomers);
+    }
+
+    public static void createCustomers(int waiterNumber) {
+        for (int i = 0; i < numOfCustomers; i++) {
+            customers[i] = new Customer(new String("Customer " + i));
+            customers[i].start();
+        }
     }
 }

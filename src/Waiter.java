@@ -1,16 +1,17 @@
 import java.util.concurrent.Semaphore;
 
 public class Waiter extends Thread {
-    public Semaphore lock;
+    public Semaphore currentlyServing;
     private Restaurant restaurant; //keeps track of restaurant instance
     private Table table; //Keeps track of table being served
     private String id;
     private String order;
 
     public Waiter(String id, Restaurant restaurant){
-        this.lock = new Semaphore(0);
+        this.currentlyServing = new Semaphore(1); //Initialize to 1 since a waiter can serve only one customer at a time
         this.restaurant = restaurant;
         this.id = id;
+        this.order = null;
     }
 
     public String getWaiterId(){
@@ -25,9 +26,11 @@ public class Waiter extends Thread {
 
     @Override
     public void run(){
-
-        while(true){
-
+        String lastOrder = null;
+        while(true) {
+            if(this.order != lastOrder) { //Keep track of when a new customer is being served by the changing id
+                lastOrder = this.order;
+            }
         }
     }
 }

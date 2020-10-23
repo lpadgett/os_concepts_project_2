@@ -31,10 +31,18 @@ public class Customer extends Thread {
         try {
             enterRestaurantThroughDoor(this.restaurant);
         } catch (InterruptedException e) {
-            System.out.println(this.id + "tried pushing on a pull door.");
+            System.out.println(this.id + " tried pushing on a pull door.");
         }
-        sitAtTable();
-        callWaiter(this.table.waiter);
+        try {
+            sitAtTable();
+        } catch (InterruptedException e) {
+            System.out.println(this.id + " completely missed the chair while trying to sit down.");
+        }
+        try {
+            callWaiter(this.table.waiter);
+        } catch (InterruptedException e) {
+            System.out.println("Waiter " + this.table.waiter.getWaiterId() + " slipped on the way to the customer.");
+        }
         eatFood();
         leaveTable();
         payBill();
@@ -42,30 +50,34 @@ public class Customer extends Thread {
     }
 
     private void enterRestaurantThroughDoor(Restaurant restaurant) throws InterruptedException {
-        boolean entryAcquired = restaurant.doorsSemaphore.tryAcquire();
-        while(entryAcquired == false){
-            entryAcquired = restaurant.doorsSemaphore.tryAcquire();
-        }
+        restaurant.doorsSemaphore.acquire();
         wait(5); //Wait (be in door) for 5ms
         restaurant.doorsSemaphore.release(); //Inside restaurant
     }
 
-    private void sitAtTable(){
+    private void sitAtTable() throws InterruptedException {
         Table firstChoiceTable = this.restaurant.tableChoice(this.firstChoice);
         Table secondChoiceTable = this.restaurant.tableChoice(this.secondChoice);
 
-        if(firstChoiceTable.tableSemaphore.availablePermits() < 7){
-
+        if(firstChoiceTable.tableSemaphore.getQueueLength() >= 7 && secondChoiceTable.tableSemaphore.getQueueLength() < 7) {
+            secondChoiceTable.tableSemaphore.acquire();
+            this.table = secondChoiceTable;
+        } else {
+            firstChoiceTable.tableSemaphore.acquire();
+            this.table = firstChoiceTable;
         }
     }
 
-    private void callWaiter(Waiter waiter){
+    private void callWaiter(Waiter waiter) throws InterruptedException {
+        waiter.currentlyServing.acquire(); //Waits until waiter is available;
 
     }
 
     private void eatFood(){}
 
-    private void leaveTable(){}
+    private void leaveTable(){
+        this.table.tableSemaphore.release();
+    }
 
     private void payBill(){
 

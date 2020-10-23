@@ -28,7 +28,11 @@ public class Customer extends Thread {
 
     @Override
     public void run(){
-        enterRestaurantThroughDoor(this.restaurant);
+        try {
+            enterRestaurantThroughDoor(this.restaurant);
+        } catch (InterruptedException e) {
+            System.out.println(this.id + "tried pushing on a pull door.");
+        }
         sitAtTable();
         callWaiter(this.table.waiter);
         eatFood();
@@ -37,26 +41,22 @@ public class Customer extends Thread {
         exit();
     }
 
-    private void enterRestaurantThroughDoor(Restaurant restaurant){
+    private void enterRestaurantThroughDoor(Restaurant restaurant) throws InterruptedException {
+        boolean entryAcquired = restaurant.doorsSemaphore.tryAcquire();
+        while(entryAcquired == false){
+            entryAcquired = restaurant.doorsSemaphore.tryAcquire();
+        }
+        wait(5); //Wait (be in door) for 5ms
+        restaurant.doorsSemaphore.release(); //Inside restaurant
     }
 
     private void sitAtTable(){
         Table firstChoiceTable = this.restaurant.tableChoice(this.firstChoice);
+        Table secondChoiceTable = this.restaurant.tableChoice(this.secondChoice);
 
-        if(firstChoiceTable.tableOrLine(this, false)){
-            this.table = firstChoiceTable;
-            return; //If customer got first choice, stop
-        } else {
-            Table secondChoiceTable = Client.restaurant.tableChoice(this.secondChoice);
-            if(secondChoiceTable.tableOrLine(this, false)){
-                this.table = secondChoiceTable;
-                return; //If customer got second choice, stop
-            }
+        if(firstChoiceTable.tableSemaphore.availablePermits() < 7){
+
         }
-
-        //If both the first and second choice are crowded then give up and get in line at first choice
-        firstChoiceTable.tableOrLine(this, true);
-        this.table = firstChoiceTable;
     }
 
     private void callWaiter(Waiter waiter){

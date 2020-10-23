@@ -11,12 +11,12 @@ public class Client {
     public static void initialize(int waiterQuantity, int customerQuantity) {
         customers = new Customer[customerQuantity];
         restaurant = new Restaurant(waiterQuantity);
-        createCustomers(numOfCustomers);
+        createCustomers(customerQuantity);
     }
 
-    public static void createCustomers(int waiterNumber) {
+    public static void createCustomers(int customerQuantity) {
         for (int i = 0; i < numOfCustomers; i++) {
-            customers[i] = new Customer(new String("Customer " + i));
+            customers[i] = new Customer(new String("Customer " + i), restaurant);
             customers[i].start();
         }
     }

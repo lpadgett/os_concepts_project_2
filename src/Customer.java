@@ -6,11 +6,14 @@ public class Customer extends Thread {
     private FoodType secondChoice;
     private Restaurant restaurant; //Keeps track of restaurant instance
     private Table table;
+    private boolean hasFood;
+    private boolean waiterIsReadyToTakeOrder;
 
 
     public Customer(String id, Restaurant restaurant){
         this.id = id;
         this.restaurant = restaurant;
+        this.hasFood = false;
 
         //Generate foodChoices
         int random = new Random().nextInt(100);
@@ -80,7 +83,11 @@ public class Customer extends Thread {
         restaurant.doorsSemaphore.acquire();
         wait(10); //Wait (be in door) for 10ms //TODO: Choose randomly
         restaurant.doorsSemaphore.release(); //Inside restaurant
+        restaurant.customerEntersRestaurant();
         System.out.println(getCustomerId() + " entered the restaurant.");
+        if(!restaurant.haveCustomersEnteredRestaurant()) {
+            restaurant.atLeastOneCustomerHasEnteredRestaurant();
+        }
     }
 
     private void sitAtTable() throws InterruptedException {
@@ -105,11 +112,23 @@ public class Customer extends Thread {
     }
 
     private void order(){
+        boolean madeAnnouncement = false;
+        while(!this.waiterIsReadyToTakeOrder){
+            if(!madeAnnouncement) {
+                System.out.println(getCustomerId() + " is waiting for their waiter to take their order.");
+            }
+        }
         this.table.waiter.takeOrder(getCustomerId());
         System.out.println(getCustomerId() + " ordered their food.");
     }
 
     private void eatFood() throws InterruptedException { //Takes 200ms to 1 second according to requirements, make it 300ms for simplicity
+        boolean madeAnnouncement = false;
+        while(!this.hasFood){
+            if(!madeAnnouncement) {
+                System.out.println(getCustomerId() + " is waiting on their food.");
+            }
+        }
         this.table.waiter.currentlyServing.release(); //Finally release waiter after receiving food
         wait(300); //TODO: Choose randomly
         System.out.println(getCustomerId() + " ate their food.");
@@ -128,9 +147,18 @@ public class Customer extends Thread {
         this.restaurant.doorsSemaphore.acquire();
         wait(10); //TODO: choose randomly
         this.restaurant.doorsSemaphore.release();
+        this.restaurant.removeCustomerFromRestaurant();
     }
 
     public String getCustomerId(){
         return this.id;
+    }
+
+    public void waiterIsReady() {
+        this.waiterIsReadyToTakeOrder = true;
+    }
+
+    public void receiveFoodFromWaiter() {
+        this.hasFood = true;
     }
 }

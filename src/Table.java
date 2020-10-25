@@ -21,4 +21,8 @@ public class Table {
     public void leave(Customer customer) {
         this.currentlySeated.remove(customer.getCustomerId());
     }
+
+    public Customer getSeatedCustomer(String customerId){
+        return currentlySeated.get(customerId);
+    }
 }

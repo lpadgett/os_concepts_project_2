@@ -5,6 +5,7 @@ public class Restaurant {
     private EnumMap<FoodType, Table> tables;
     private static Waiter[] waiters;
     private int numOfCustomersInRestaurant;
+    private boolean customersHaveEnteredTheRestaurant;
 
     //Public is shared data
     public Semaphore doorsSemaphore;
@@ -33,6 +34,7 @@ public class Restaurant {
         waiters[2].chooseTable(this.tables.get(FoodType.PASTA));
 
         this.numOfCustomersInRestaurant = 0;
+        this.customersHaveEnteredTheRestaurant = false;
     }
 
     public Table tableChoice(FoodType choice) {
@@ -43,11 +45,23 @@ public class Restaurant {
         return this.numOfCustomersInRestaurant;
     }
 
+    public void customerEntersRestaurant(){
+        this.numOfCustomersInRestaurant++;
+    }
+
     public void removeCustomerFromRestaurant(){
         this.numOfCustomersInRestaurant--;
     }
 
     public synchronized void payBill(Customer customer) throws InterruptedException { //Only one customer can pay at a time, hence synchronized. Requirements did not specify what bill-paying entails, so customer just waits 15ms
         customer.wait(15);
+    }
+
+    public void atLeastOneCustomerHasEnteredRestaurant() {
+        this.customersHaveEnteredTheRestaurant = true;
+    }
+
+    public boolean haveCustomersEnteredRestaurant() {
+        return this.customersHaveEnteredTheRestaurant;
     }
 }

@@ -75,8 +75,6 @@ public class Customer extends Thread {
             System.out.println(getCustomerId() + " tried to pull the exit door open when they should have pushed.");
             e.printStackTrace();
         }
-
-        System.out.println(getCustomerId() + " left the restaurant.");
     }
 
     private void enterRestaurantThroughDoor(Restaurant restaurant) throws InterruptedException {
@@ -134,15 +132,18 @@ public class Customer extends Thread {
     }
 
     private void leaveTable(){
+        System.out.println(this.id + " left their table.");
         this.table.leave(this);
         this.table.tableSemaphore.release();
     }
 
     private void payBill() throws InterruptedException {
+        System.out.println(this.id + " paid their bill.");
         this.restaurant.payBill(this);
     }
 
     private void exit() throws InterruptedException {
+        System.out.println(this.id + " left the restaurant.");
         this.restaurant.doorsSemaphore.acquire();
         sleep(10); //TODO: choose randomly
         this.restaurant.doorsSemaphore.release();
@@ -158,6 +159,7 @@ public class Customer extends Thread {
     }
 
     public void receiveFoodFromWaiter() {
+        System.out.println(this.id + " got their food.");
         this.hasFood = true;
     }
 }

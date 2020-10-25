@@ -51,13 +51,14 @@ public class Waiter extends Thread {
 
                 bringCustomerOrder(customerServing);
             }
-
-            System.out.println(this.id + " has cleaned up the table and left the restaurant.");
         }
+
+        System.out.println(this.id + " has cleaned up the table and left the restaurant.");
     }
 
     public void takeOrder(String customerId) {
         this.order = customerId;
+        System.out.println(this.id + " took " + this.order + "'s order.");
     }
 
     public void chooseTable(Table table){
@@ -67,16 +68,19 @@ public class Waiter extends Thread {
     }
 
     private void goToKitchen() throws InterruptedException {
+        System.out.println(this.id + " is going to the kitchen for " + this.order + "'s order.");
         long timeToSpendInKitchen = new Random().nextInt(400) + 100; //Spends anywhere from 100 to 500 ms in kitchen
         sleep(timeToSpendInKitchen);
     }
 
     private void waitOutsideKitchen() throws InterruptedException {
+        System.out.println(this.id + " is waiting outside the kitchen for " + this.order + "'s order.");
         long timeToSpendOutsideKitchen = new Random().nextInt(700) + 300; //Spends anywhere from 300 to 1000 ms in kitchen
         sleep(timeToSpendOutsideKitchen);
     }
 
     private void bringCustomerOrder(Customer customer){
+        System.out.println(this.id + " is bringing " + this.order + " their order.");
         customer.receiveFoodFromWaiter();
     }
 }

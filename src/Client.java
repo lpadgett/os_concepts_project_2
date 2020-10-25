@@ -1,6 +1,8 @@
+import java.util.HashSet;
+
 public class Client {
     public static Restaurant restaurant;
-    private static Customer[] customers;
+    private static HashSet<Customer> customers;
     public static final int numOfWaiters = 3;
     public static final int numOfCustomers = 40;
 
@@ -9,15 +11,17 @@ public class Client {
     }
 
     public static void initialize(int waiterQuantity, int customerQuantity) {
-        customers = new Customer[customerQuantity];
+        customers = new HashSet<Customer>();
         restaurant = new Restaurant(waiterQuantity);
         createCustomers(customerQuantity);
     }
 
     public static void createCustomers(int customerQuantity) {
+        Customer tempCustomerVar;
         for (int i = 0; i < numOfCustomers; i++) {
-            customers[i] = new Customer(new String("Customer " + i), restaurant);
-            customers[i].start();
+            tempCustomerVar = new Customer(new String("Customer " + i), restaurant);
+            customers.add(tempCustomerVar);
+            tempCustomerVar.start();
         }
     }
 }

@@ -46,4 +46,8 @@ public class Restaurant {
     public void removeCustomerFromRestaurant(){
         this.numOfCustomersInRestaurant--;
     }
+
+    public synchronized void payBill(Customer customer) throws InterruptedException { //Only one customer can pay at a time, hence synchronized. Requirements did not specify what bill-paying entails, so customer just waits 15ms
+        customer.wait(15);
+    }
 }

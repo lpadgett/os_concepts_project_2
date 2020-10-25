@@ -31,33 +31,56 @@ public class Customer extends Thread {
         try {
             enterRestaurantThroughDoor(this.restaurant);
         } catch (InterruptedException e) {
-            System.out.println(this.id + " tried pushing on a pull door.");
+            System.out.println(getCustomerId() + " tried pushing the entry door open when they should have pulled.");
+            e.printStackTrace();
         }
+
         try {
             sitAtTable();
         } catch (InterruptedException e) {
-            System.out.println(this.id + " completely missed the chair while trying to sit down.");
+            System.out.println(getCustomerId() + " completely missed the chair while trying to sit down.");
+            e.printStackTrace();
         }
+
         try {
             callWaiter(this.table.waiter);
         } catch (InterruptedException e) {
-            System.out.println("Waiter " + this.table.waiter.getWaiterId() + " slipped on the way to the customer.");
+            System.out.println(this.table.waiter.getWaiterId() + " did not hear " + getCustomerId() + " calling them.");
+            e.printStackTrace();
         }
+
         order();
+
         try {
             eatFood();
         } catch (InterruptedException e) {
+            System.out.println(getCustomerId() + " dropped their food on the floor.");
             e.printStackTrace();
         }
+
         leaveTable();
-        payBill();
-        exit();
+
+        try {
+            payBill();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            exit();
+        } catch (InterruptedException e) {
+            System.out.println(getCustomerId() + " tried to pull the exit door open when they should have pushed.");
+            e.printStackTrace();
+        }
+
+        System.out.println(getCustomerId() + " left the restaurant.");
     }
 
     private void enterRestaurantThroughDoor(Restaurant restaurant) throws InterruptedException {
         restaurant.doorsSemaphore.acquire();
-        wait(10); //Wait (be in door) for 10ms
+        wait(10); //Wait (be in door) for 10ms //TODO: Choose randomly
         restaurant.doorsSemaphore.release(); //Inside restaurant
+        System.out.println(getCustomerId() + " entered the restaurant.");
     }
 
     private void sitAtTable() throws InterruptedException {
@@ -73,18 +96,23 @@ public class Customer extends Thread {
         }
 
         this.table.sit(this);
+        System.out.println(getCustomerId() + " chose a table and sat down.");
     }
 
     private void callWaiter(Waiter waiter) throws InterruptedException {
-        waiter.currentlyServing.acquire(); //Waits until waiter is available;
+        waiter.currentlyServing.acquire(); //Waits until waiter is available. The waiter will be released right before the customer begins to eat in the eatFood() method.
+        System.out.println(getCustomerId() + " called the waiter for their table.");
     }
 
     private void order(){
         this.table.waiter.takeOrder(getCustomerId());
+        System.out.println(getCustomerId() + " ordered their food.");
     }
 
     private void eatFood() throws InterruptedException { //Takes 200ms to 1 second according to requirements, make it 300ms for simplicity
-        wait(300);
+        this.table.waiter.currentlyServing.release(); //Finally release waiter after receiving food
+        wait(300); //TODO: Choose randomly
+        System.out.println(getCustomerId() + " ate their food.");
     }
 
     private void leaveTable(){
@@ -92,21 +120,17 @@ public class Customer extends Thread {
         this.table.tableSemaphore.release();
     }
 
-    private static synchronized void payBill() { //Only one customer can pay at a time, hence static synchronized
-
+    private void payBill() throws InterruptedException {
+        this.restaurant.payBill(this);
     }
 
-    private void exit(){}
+    private void exit() throws InterruptedException {
+        this.restaurant.doorsSemaphore.acquire();
+        wait(10); //TODO: choose randomly
+        this.restaurant.doorsSemaphore.release();
+    }
 
     public String getCustomerId(){
         return this.id;
-    }
-
-    public FoodType getFirstChoice(){
-        return this.firstChoice;
-    }
-
-    public FoodType getSecondChoice(){
-        return this.secondChoice;
     }
 }

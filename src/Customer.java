@@ -79,7 +79,7 @@ public class Customer extends Thread {
 
     private void enterRestaurantThroughDoor(Restaurant restaurant) throws InterruptedException {
         restaurant.doorsSemaphore.acquire();
-        sleep(10); //Wait (be in door) for 10ms //TODO: Choose randomly
+        Thread.sleep(10); //Wait (be in door) for 10ms //TODO: Choose randomly
         restaurant.doorsSemaphore.release(); //Inside restaurant
         restaurant.customerEntersRestaurant();
         System.out.println(getCustomerId() + " entered the restaurant.");
@@ -115,7 +115,6 @@ public class Customer extends Thread {
                 this.table.waiter.takeOrder(getCustomerId());
             }
         }
-        System.out.println(getCustomerId() + " ordered their food.");
     }
 
     private void eatFood() throws InterruptedException { //Takes 200ms to 1 second according to requirements, make it 300ms for simplicity
@@ -127,7 +126,7 @@ public class Customer extends Thread {
             }
         }
         this.table.waiter.currentlyServing.release(); //Finally release waiter after receiving food
-        sleep(300); //TODO: Choose randomly
+        Thread.sleep(300); //TODO: Choose randomly
         System.out.println(getCustomerId() + " ate their food.");
     }
 
@@ -145,9 +144,10 @@ public class Customer extends Thread {
     private void exit() throws InterruptedException {
         System.out.println(this.id + " left the restaurant.");
         this.restaurant.doorsSemaphore.acquire();
-        sleep(10); //TODO: choose randomly
+        Thread.sleep(10); //TODO: choose randomly
         this.restaurant.doorsSemaphore.release();
         this.restaurant.customerHasBeenServed();
+        System.out.println("There are " + this.restaurant.getNumOfCustomersServed() + "that have been served.");
     }
 
     public String getCustomerId(){

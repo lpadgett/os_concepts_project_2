@@ -12,7 +12,7 @@ public class Client {
 
     public static void initialize(int waiterQuantity, int customerQuantity) {
         customers = new HashSet<Customer>();
-        restaurant = new Restaurant(waiterQuantity);
+        restaurant = new Restaurant(waiterQuantity, numOfCustomers);
         createCustomers(customerQuantity);
     }
 

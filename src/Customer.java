@@ -81,13 +81,10 @@ public class Customer extends Thread {
 
     private void enterRestaurantThroughDoor(Restaurant restaurant) throws InterruptedException {
         restaurant.doorsSemaphore.acquire();
-        wait(10); //Wait (be in door) for 10ms //TODO: Choose randomly
+        sleep(10); //Wait (be in door) for 10ms //TODO: Choose randomly
         restaurant.doorsSemaphore.release(); //Inside restaurant
         restaurant.customerEntersRestaurant();
         System.out.println(getCustomerId() + " entered the restaurant.");
-        if(!restaurant.haveCustomersEnteredRestaurant()) {
-            restaurant.atLeastOneCustomerHasEnteredRestaurant();
-        }
     }
 
     private void sitAtTable() throws InterruptedException {
@@ -116,9 +113,10 @@ public class Customer extends Thread {
         while(!this.waiterIsReadyToTakeOrder){
             if(!madeAnnouncement) {
                 System.out.println(getCustomerId() + " is waiting for their waiter to take their order.");
+                madeAnnouncement = true;
+                this.table.waiter.takeOrder(getCustomerId());
             }
         }
-        this.table.waiter.takeOrder(getCustomerId());
         System.out.println(getCustomerId() + " ordered their food.");
     }
 
@@ -127,10 +125,11 @@ public class Customer extends Thread {
         while(!this.hasFood){
             if(!madeAnnouncement) {
                 System.out.println(getCustomerId() + " is waiting on their food.");
+                madeAnnouncement = true;
             }
         }
         this.table.waiter.currentlyServing.release(); //Finally release waiter after receiving food
-        wait(300); //TODO: Choose randomly
+        sleep(300); //TODO: Choose randomly
         System.out.println(getCustomerId() + " ate their food.");
     }
 
@@ -145,9 +144,9 @@ public class Customer extends Thread {
 
     private void exit() throws InterruptedException {
         this.restaurant.doorsSemaphore.acquire();
-        wait(10); //TODO: choose randomly
+        sleep(10); //TODO: choose randomly
         this.restaurant.doorsSemaphore.release();
-        this.restaurant.removeCustomerFromRestaurant();
+        this.restaurant.customerHasBeenServed();
     }
 
     public String getCustomerId(){

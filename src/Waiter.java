@@ -22,12 +22,7 @@ public class Waiter extends Thread {
     @Override
     public void run(){ //TODO: Rethink the whole order-taking mechanism here
         String lastOrder = null;
-        while(!this.restaurant.haveCustomersEnteredRestaurant()){
-            if(this.restaurant.haveCustomersEnteredRestaurant()){
-                break;
-            }
-        }
-        while(this.restaurant.getNumOfCustomersInRestaurant() > 0) { //TODO: Find a way to terminate the waiter when all of the customers have left the restaurant
+        while(!this.restaurant.allCustomersServed()) {
             if(this.order != lastOrder) { //Keep track of when a new customer is being served by the changing id
                 lastOrder = this.order;
                 Customer customerServing = this.table.getSeatedCustomer(this.order);
@@ -73,12 +68,12 @@ public class Waiter extends Thread {
 
     private void goToKitchen() throws InterruptedException {
         long timeToSpendInKitchen = new Random().nextInt(400) + 100; //Spends anywhere from 100 to 500 ms in kitchen
-        wait(timeToSpendInKitchen);
+        sleep(timeToSpendInKitchen);
     }
 
     private void waitOutsideKitchen() throws InterruptedException {
         long timeToSpendOutsideKitchen = new Random().nextInt(700) + 300; //Spends anywhere from 300 to 1000 ms in kitchen
-        wait(timeToSpendOutsideKitchen);
+        sleep(timeToSpendOutsideKitchen);
     }
 
     private void bringCustomerOrder(Customer customer){

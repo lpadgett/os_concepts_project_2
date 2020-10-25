@@ -3,18 +3,18 @@ import java.util.concurrent.Semaphore;
 
 public class Restaurant {
     private EnumMap<FoodType, Table> tables;
-    private static Waiter[] waiters;
-    private int numOfCustomersInRestaurant;
-    private boolean customersHaveEnteredTheRestaurant;
+    private Waiter[] waiters;
+    private int numOfCustomersServed;
+    private int numOfCustomersToServe;
 
     //Public is shared data
     public Semaphore doorsSemaphore;
     public Semaphore kitchenSemaphore;
 
-    public Restaurant(int numOfWaiters) {
+    public Restaurant(int numOfWaiters, int numOfCustomersToServe) {
         this.doorsSemaphore = new Semaphore(2); //2 Customers can enter at once
         this.kitchenSemaphore = new Semaphore(1); //Only one waiter can enter at once
-
+        this.waiters = new Waiter[3];
         this.tables = new EnumMap<FoodType, Table>(FoodType.class);
         this.tables.put(FoodType.PASTA, new Table(FoodType.PASTA));
         this.tables.put(FoodType.SEAFOOD, new Table(FoodType.SEAFOOD));
@@ -33,35 +33,31 @@ public class Restaurant {
         this.tables.get(FoodType.PASTA).waiter = waiters[2];
         waiters[2].chooseTable(this.tables.get(FoodType.PASTA));
 
-        this.numOfCustomersInRestaurant = 0;
-        this.customersHaveEnteredTheRestaurant = false;
+        this.numOfCustomersServed = 0;
+        this.numOfCustomersToServe = numOfCustomersToServe;
     }
 
     public Table tableChoice(FoodType choice) {
         return tables.get(choice);
     }
 
-    public int getNumOfCustomersInRestaurant(){
-        return this.numOfCustomersInRestaurant;
+    public int getNumOfCustomersServed(){
+        return this.numOfCustomersServed;
     }
 
     public void customerEntersRestaurant(){
-        this.numOfCustomersInRestaurant++;
-    }
-
-    public void removeCustomerFromRestaurant(){
-        this.numOfCustomersInRestaurant--;
+        this.numOfCustomersServed++;
     }
 
     public synchronized void payBill(Customer customer) throws InterruptedException { //Only one customer can pay at a time, hence synchronized. Requirements did not specify what bill-paying entails, so customer just waits 15ms
-        customer.wait(15);
+        customer.sleep(15);
     }
 
-    public void atLeastOneCustomerHasEnteredRestaurant() {
-        this.customersHaveEnteredTheRestaurant = true;
+    public boolean allCustomersServed() {
+        return (this.numOfCustomersServed == this.numOfCustomersToServe);
     }
 
-    public boolean haveCustomersEnteredRestaurant() {
-        return this.customersHaveEnteredTheRestaurant;
+    public void customerHasBeenServed() {
+        this.numOfCustomersServed++;
     }
 }

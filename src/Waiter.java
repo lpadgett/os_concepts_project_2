@@ -20,14 +20,19 @@ public class Waiter extends Thread {
     }
 
     @Override
-    public void run(){ //TODO: Rethink the whole order-taking mechanism here
-        String lastOrder = null;
-        while(true) {
+    public void run(){
+        try { //Wait 0.5 seconds for customer threads to queue
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        while(this.currentlyServing.hasQueuedThreads() || this.restaurant.getNumOfCustomersServed() < 40) {
             if(this.restaurant.allCustomersServed() == true){
                 break;
             }
         }
-        System.out.println(this.id + " has cleaned up the table and left the restaurant.");
+
+        exit();
     }
 
     public void takeOrder(String customerId) {
@@ -43,7 +48,7 @@ public class Waiter extends Thread {
         customerServing.waiterIsReady();
 
         try {
-            goToKitchen();
+            goToKitchenFromTable();
         } catch (InterruptedException e) {
             System.out.println(this.id + " forgot he had a customer to serve and got stuck in the kitchen.");
             e.printStackTrace();
@@ -57,7 +62,7 @@ public class Waiter extends Thread {
         }
 
         try {
-            goToKitchen();
+            getOrderFromInsidekitchen();
         } catch (InterruptedException e) {
             System.out.println(this.id + " forgot to get the order when he went to the kitchen again.");
             e.printStackTrace();
@@ -72,8 +77,14 @@ public class Waiter extends Thread {
         }
     }
 
-    private void goToKitchen() throws InterruptedException {
-        System.out.println(this.id + " is going to the kitchen for " + this.order + "'s order.");
+    private void goToKitchenFromTable() throws InterruptedException {
+        System.out.println(this.id + " is going to the kitchen from the table for " + this.order + "'s order.");
+        long timeToSpendInKitchen = new Random().nextInt(400) + 100; //Spends anywhere from 100 to 500 ms in kitchen
+        Thread.sleep(timeToSpendInKitchen);
+    }
+
+    private void getOrderFromInsidekitchen() throws InterruptedException {
+        System.out.println(this.id + " is going back inside the kitchen to get " + this.order + "'s order (it is done).");
         long timeToSpendInKitchen = new Random().nextInt(400) + 100; //Spends anywhere from 100 to 500 ms in kitchen
         Thread.sleep(timeToSpendInKitchen);
     }
@@ -85,7 +96,11 @@ public class Waiter extends Thread {
     }
 
     private void bringCustomerOrder(Customer customer){
-        System.out.println(this.id + " is bringing " + this.order + " their order.");
+        System.out.println(this.id + " is bringing " + this.order + " their order from the kitchen.");
         customer.receiveFoodFromWaiter();
+    }
+
+    private void exit() {
+        System.out.println(this.id + " has cleaned up the table and left the restaurant.");
     }
 }

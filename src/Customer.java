@@ -15,7 +15,6 @@ public class Customer extends Thread {
         this.restaurant = restaurant;
         this.hasFood = false;
 
-        //Generate foodChoices
         int random = new Random().nextInt(100);
         if(random <= 33) {
             this.firstChoice = FoodType.PASTA;
@@ -79,9 +78,8 @@ public class Customer extends Thread {
 
     private void enterRestaurantThroughDoor(Restaurant restaurant) throws InterruptedException {
         restaurant.doorsSemaphore.acquire();
-        Thread.sleep(10); //Wait (be in door) for 10ms //TODO: Choose randomly
+        Thread.sleep(10); //Wait (be in door) for 10ms
         restaurant.doorsSemaphore.release(); //Inside restaurant
-        restaurant.customerEntersRestaurant();
         System.out.println(getCustomerId() + " entered the restaurant.");
     }
 
@@ -126,7 +124,8 @@ public class Customer extends Thread {
             }
         }
         this.table.waiter.currentlyServing.release(); //Finally release waiter after receiving food
-        Thread.sleep(300); //TODO: Choose randomly
+        long timeToSpendEating = new Random().nextInt(800) + 200; //Spends anywhere from 100 to 500 ms in kitchen
+        Thread.sleep(timeToSpendEating);
         System.out.println(getCustomerId() + " ate their food.");
     }
 
@@ -144,10 +143,10 @@ public class Customer extends Thread {
     private void exit() throws InterruptedException {
         System.out.println(this.id + " left the restaurant.");
         this.restaurant.doorsSemaphore.acquire();
-        Thread.sleep(10); //TODO: choose randomly
+        Thread.sleep(10);
         this.restaurant.doorsSemaphore.release();
         this.restaurant.customerHasBeenServed();
-        System.out.println("There are " + this.restaurant.getNumOfCustomersServed() + "that have been served.");
+        System.out.println("There are " + this.restaurant.getNumOfCustomersServed() + " that have been served.");
     }
 
     public String getCustomerId(){

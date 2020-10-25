@@ -45,16 +45,12 @@ public class Restaurant {
         return this.numOfCustomersServed;
     }
 
-    public void customerEntersRestaurant(){
-        this.numOfCustomersServed++;
-    }
-
     public synchronized void payBill(Customer customer) throws InterruptedException { //Only one customer can pay at a time, hence synchronized. Requirements did not specify what bill-paying entails, so customer just waits 15ms
         customer.sleep(15);
     }
 
     public boolean allCustomersServed() {
-        return (this.numOfCustomersServed == this.numOfCustomersToServe);
+        return (this.numOfCustomersServed >= this.numOfCustomersToServe);
     }
 
     public void customerHasBeenServed() {

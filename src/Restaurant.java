@@ -15,9 +15,9 @@ public class Restaurant {
         this.kitchenSemaphore = new Semaphore(1); //Only one waiter can enter at once
 
         this.tables = new EnumMap<FoodType, Table>(FoodType.class);
-        this.tables.put(FoodType.PASTA, new Table());
-        this.tables.put(FoodType.SEAFOOD, new Table());
-        this.tables.put(FoodType.STEAK, new Table());
+        this.tables.put(FoodType.PASTA, new Table(FoodType.PASTA));
+        this.tables.put(FoodType.SEAFOOD, new Table(FoodType.SEAFOOD));
+        this.tables.put(FoodType.STEAK, new Table(FoodType.STEAK));
 
         for (int i = 0; i < numOfWaiters; i++) { //Start waiters
             this.waiters[i] = new Waiter(new String("Waiter " + i), this);

@@ -43,6 +43,7 @@ public class Customer extends Thread {
         } catch (InterruptedException e) {
             System.out.println("Waiter " + this.table.waiter.getWaiterId() + " slipped on the way to the customer.");
         }
+        order();
         eatFood();
         leaveTable();
         payBill();
@@ -51,7 +52,7 @@ public class Customer extends Thread {
 
     private void enterRestaurantThroughDoor(Restaurant restaurant) throws InterruptedException {
         restaurant.doorsSemaphore.acquire();
-        wait(5); //Wait (be in door) for 5ms
+        wait(10); //Wait (be in door) for 10ms
         restaurant.doorsSemaphore.release(); //Inside restaurant
     }
 
@@ -66,14 +67,22 @@ public class Customer extends Thread {
             firstChoiceTable.tableSemaphore.acquire();
             this.table = firstChoiceTable;
         }
+
+        this.table.sit(this);
     }
 
     private void callWaiter(Waiter waiter) throws InterruptedException {
         waiter.currentlyServing.acquire(); //Waits until waiter is available;
-
     }
 
-    private void eatFood(){}
+    private void order(){
+        this.table.waiter.takeOrder();
+        Client.
+    }
+
+    private void eatFood(){
+
+    }
 
     private void leaveTable(){
         this.table.tableSemaphore.release();

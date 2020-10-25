@@ -3,7 +3,7 @@ import java.util.concurrent.Semaphore;
 public class Waiter extends Thread {
     public Semaphore currentlyServing;
     private Restaurant restaurant; //keeps track of restaurant instance
-    private Table table; //Keeps track of table being served
+    private Table table; //Keeps track of table instance
     private String id;
     private String order;
 
@@ -18,19 +18,21 @@ public class Waiter extends Thread {
         return this.id;
     }
 
-    public void setTable(Table table) {
-        if(this.table == null) {
-            this.table = table; //If the waiter hasn't been assigned to a table yet, assign to table.
-        }
-    }
-
     @Override
-    public void run(){
+    public void run(){ //TODO: Rethink the whole order-taking mechanism here
         String lastOrder = null;
         while(true) {
             if(this.order != lastOrder) { //Keep track of when a new customer is being served by the changing id
                 lastOrder = this.order;
             }
         }
+    }
+
+    public void takeOrder(String customerId) {
+        this.order = customerId;
+    }
+
+    private void interactWithCustomer(){
+        //TODO: Do stuff for customer, remember the hashmap in the Table class which keeps track of currently seated customer instances
     }
 }

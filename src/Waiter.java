@@ -9,7 +9,7 @@ public class Waiter extends Thread {
     private String order;
 
     public Waiter(String id, Restaurant restaurant){
-        this.currentlyServing = new Semaphore(1); //Initialize to 0 since a waiter can serve only one customer at a time
+        this.currentlyServing = new Semaphore(1); //Initialize to 1 since a waiter can serve only one customer at a time
         this.restaurant = restaurant;
         this.id = id;
         this.order = null;

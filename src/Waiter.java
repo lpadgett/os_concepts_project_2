@@ -84,7 +84,7 @@ public class Waiter extends Thread {
     }
 
     private void getOrderFromInsidekitchen() throws InterruptedException {
-        System.out.println(this.id + " is going back inside the kitchen to get " + this.order + "'s order (it is done).");
+        System.out.println(this.id + " is going back inside the kitchen to get " + this.order + "'s order (it is ready).");
         long timeToSpendInKitchen = new Random().nextInt(400) + 100; //Spends anywhere from 100 to 500 ms in kitchen
         Thread.sleep(timeToSpendInKitchen);
     }

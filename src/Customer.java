@@ -146,7 +146,6 @@ public class Customer extends Thread {
         Thread.sleep(10);
         this.restaurant.doorsSemaphore.release();
         this.restaurant.customerHasBeenServed();
-        System.out.println("There are " + this.restaurant.getNumOfCustomersServed() + " that have been served.");
     }
 
     public String getCustomerId(){

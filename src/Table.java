@@ -4,7 +4,7 @@ import java.util.concurrent.Semaphore;
 
 public class Table {
     public Semaphore tableSemaphore;
-    private ConcurrentHashMap<String, Customer> currentlySeated;
+    private ConcurrentHashMap<String, Customer> currentlySeated; //TODO: Determine if using concurrenthashmap over normal hashmap would cause synchronization issues
     public final FoodType serves;
     public Waiter waiter;
 

@@ -24,6 +24,7 @@ public class Waiter extends Thread {
         while(true) {
             if(this.order != lastOrder) { //Keep track of when a new customer is being served by the changing id
                 lastOrder = this.order;
+
             }
         }
     }
@@ -34,5 +35,11 @@ public class Waiter extends Thread {
 
     private void interactWithCustomer(){
         //TODO: Do stuff for customer, remember the hashmap in the Table class which keeps track of currently seated customer instances
+    }
+
+    public void chooseTable(Table table){
+        if(this.table == null) {
+            this.table = table;
+        }
     }
 }

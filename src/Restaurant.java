@@ -26,8 +26,11 @@ public class Restaurant {
 
         //Assign waiters to tables
         this.tables.get(FoodType.STEAK).waiter = waiters[0];
+        waiters[0].chooseTable(this.tables.get(FoodType.STEAK));
         this.tables.get(FoodType.SEAFOOD).waiter = waiters[1];
+        waiters[1].chooseTable(this.tables.get(FoodType.SEAFOOD));
         this.tables.get(FoodType.PASTA).waiter = waiters[2];
+        waiters[2].chooseTable(this.tables.get(FoodType.PASTA));
 
         this.numOfCustomersInRestaurant = 0;
     }

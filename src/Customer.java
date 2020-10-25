@@ -44,7 +44,11 @@ public class Customer extends Thread {
             System.out.println("Waiter " + this.table.waiter.getWaiterId() + " slipped on the way to the customer.");
         }
         order();
-        eatFood();
+        try {
+            eatFood();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         leaveTable();
         payBill();
         exit();
@@ -76,19 +80,19 @@ public class Customer extends Thread {
     }
 
     private void order(){
-        this.table.waiter.takeOrder();
-        Client.
+        this.table.waiter.takeOrder(getCustomerId());
     }
 
-    private void eatFood(){
-
+    private void eatFood() throws InterruptedException { //Takes 200ms to 1 second according to requirements, make it 300ms for simplicity
+        wait(300);
     }
 
     private void leaveTable(){
+        this.table.leave(this);
         this.table.tableSemaphore.release();
     }
 
-    private void payBill(){
+    private static synchronized void payBill() { //Only one customer can pay at a time, hence static synchronized
 
     }
 
